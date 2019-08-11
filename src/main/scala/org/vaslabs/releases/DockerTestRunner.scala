@@ -1,21 +1,15 @@
 package org.vaslabs.releases
 
-import java.io.{File, FileWriter, PrintWriter}
-import java.nio.file.Files
-
-import com.spotify.docker.client.{DefaultDockerClient, DockerClient}
-import com.spotify.docker.client.DockerClient.BuildParam
+import com.spotify.docker.client.DockerClient
 import com.spotify.docker.client.messages.ContainerConfig
-
-import scala.io.Source
-import scala.util.Try
 
 class DockerTestRunner(implicit docker: DockerClient) {
 
 
   def runTest(
               image: String,
-              command: Seq[String] = Seq("sbt", "test")): Unit = {
+              command: Seq[String] = Seq("sbt", "test"),
+              network: Option[String]): Unit = {
     val container = ContainerConfig.builder()
       .image(image)
       .cmd(command: _*)
@@ -26,6 +20,10 @@ class DockerTestRunner(implicit docker: DockerClient) {
     println(s"Container id to test is ${containerId}")
     val info = docker.inspectContainer(containerId)
     println(s"Container created ${info}")
+
+    network.foreach {
+      n => docker.connectToNetwork(containerId, n)
+    }
 
     docker.startContainer(info.config().hostname())
 

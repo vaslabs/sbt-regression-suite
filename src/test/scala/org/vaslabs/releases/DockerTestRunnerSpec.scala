@@ -34,7 +34,7 @@ class DockerTestRunnerSpec extends
 
     val testRunner = new DockerTestRunner()
     Try(testRunner.runTest(
-      dockerImageId.get(), Seq("sbt", "testOnly *SampleFailingTest")
+      dockerImageId.get(), Seq("sbt", "testOnly *SampleFailingTest"), None
     )) should matchPattern {
       case Failure(_: AssertionError) =>
     }
@@ -45,7 +45,7 @@ class DockerTestRunnerSpec extends
     val testRunner = new DockerTestRunner()
     Try(testRunner.runTest(
       dockerImageId.get(),
-      Seq("sbt", "testOnly *SampleSucceedingTest")
+      Seq("sbt", "testOnly *SampleSucceedingTest"), None
     )) should matchPattern {
       case Success(_) =>
     }

@@ -22,6 +22,8 @@ trait SbtRegressionSuiteKeys {
   val test = taskKey[Unit](
     "Runs backwards compatibility tests and then forwards. Updates the latest tag if specified and tests pass")
 
+  val dockerNetwork = settingKey[Option[String]](
+    "Network to attach the regression test, e.g. useful you are running the service locally")
   val pack = taskKey[Unit](
     "Packs your source code into a runnable docker container, ready for regression test lifecycle")
 
@@ -35,12 +37,14 @@ object SbtRegressionSuiteKeys extends SbtRegressionSuiteKeys {
         (testCommand in test).value,
         (currentVersion in test).value,
         (newVersion in test).value,
-        (updateLatest in test).value
+        (updateLatest in test).value,
+        (dockerNetwork in test).value
       )
     },
     updateLatest := true,
     currentVersion := "latest",
     testCommand := Seq("sbt", "test"),
+    dockerNetwork := None,
     pack in regression := {
       RegressionSuite.pack(
         (dockerImage in test).value,
@@ -72,12 +76,13 @@ object RegressionSuite {
      command: Seq[String],
      currentVersion: String,
      newVersion: String,
-     updateLatest: Boolean) = {
+     updateLatest: Boolean,
+     network: Option[String]) = {
     implicit val docker = DefaultDockerClient.fromEnv.build
     try {
       implicit val dockerTestRunner = new DockerTestRunner()
-      backwardsCompatibilityTest(image, command, currentVersion)
-      forwardsCompatibilityTest(image, command, newVersion)
+      backwardsCompatibilityTest(image, command, currentVersion, network)
+      forwardsCompatibilityTest(image, command, newVersion, network)
       updateLatestImage(image, newVersion, updateLatest)
     } finally {
       docker.close()
@@ -85,27 +90,30 @@ object RegressionSuite {
   }
 
   private def backwardsCompatibilityTest(
-                                          image: String,
-                                          command: Seq[String],
-                                          version: String)(implicit dockerTestRunner: DockerTestRunner) = {
+        image: String,
+        command: Seq[String],
+        version: String,
+        network: Option[String])(implicit dockerTestRunner: DockerTestRunner) = {
     println("Running backwards compatibility test")
-    singleTest(image, command, version)
+    singleTest(image, command, version, network)
   }
 
   private def forwardsCompatibilityTest(
         image: String,
         command: Seq[String],
-        version: String)(implicit dockerTestRunner: DockerTestRunner) = {
+        version: String,
+        network: Option[String])(implicit dockerTestRunner: DockerTestRunner) = {
     println("Running forwards compatibility test")
-    singleTest(image, command, version)
+    singleTest(image, command, version, network)
   }
 
   private def singleTest(
                           image: String,
                           command: Seq[String],
-                          version: String)(implicit
+                          version: String,
+                          network: Option[String])(implicit
                           dockerTestRunner: DockerTestRunner) = {
-    dockerTestRunner.runTest(s"${image}:${version}", command)
+    dockerTestRunner.runTest(s"${image}:${version}", command, network)
   }
 
   private def updateLatestImage(image: String, newVersion: String, update: Boolean)(implicit dockerClient: DockerClient) = {

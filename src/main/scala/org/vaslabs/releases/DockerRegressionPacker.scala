@@ -34,6 +34,8 @@ class DockerRegressionPacker(implicit docker: DockerClient) {
         (message: ProgressMessage) => println(message),
         BuildParam.dockerfile(dockerFile))
       println(s"Packed in docker image ${imageId}")
+      println(s"Tagging $imageId $targetImage:$version")
+      docker.tag(imageId, s"$targetImage:$version")
     } finally {
       Files.delete(dockerFile)
     }
