@@ -23,17 +23,6 @@ RUN mkdir -p "/usr/local/sbt" && \
   tar xz -C /usr/local/sbt --strip-components=1 && \
   export PATH="/usr/local/sbt/bin:$PATH" && sbt sbtVersion
 
-# Install git
-RUN apk add --no-cache git
-
-# Install docker
-RUN apk --no-cache add docker
-
-# Install jekyll
-RUN apk upgrade --update \
- && apk add ruby ruby-dev  build-base ruby-json \
- && gem install --no-document jekyll -v 2.5 \
- && rm -rf /root/src /tmp/* /usr/share/man /var/cache/apk/*
 
 RUN apk del build-base
 
