@@ -1,11 +1,16 @@
 package org.vaslabs.releases
 
-import com.spotify.docker.client.DefaultDockerClient
+import java.io.{File, FileWriter, PrintWriter}
+import java.nio.file.Files
+
+import com.spotify.docker.client.{DefaultDockerClient, DockerClient}
+import com.spotify.docker.client.DockerClient.BuildParam
 import com.spotify.docker.client.messages.ContainerConfig
 
+import scala.io.Source
 import scala.util.Try
 
-class DockerTestRunner(implicit docker: DefaultDockerClient) {
+class DockerTestRunner(implicit docker: DockerClient) {
 
 
   def runTest(

@@ -1,6 +1,6 @@
 package sbtregressionsuite
 
-import sbt.AutoPlugin
+import sbt._
 
 object SbtRegressionSuitePlugin extends AutoPlugin {
 
@@ -8,4 +8,6 @@ object SbtRegressionSuitePlugin extends AutoPlugin {
 
   override def requires = sbt.plugins.JvmPlugin
 
+  override val projectSettings =
+      inConfig(SbtRegressionSuiteKeys.regression)(SbtRegressionSuiteKeys.baseRegressionSuiteSettings)
 }

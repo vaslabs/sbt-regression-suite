@@ -1,8 +1,8 @@
 FROM openjdk:8u151-jdk-alpine
 
-ENV SCALA_VERSION=2.12.9 \
+ENV SCALA_VERSION=$$SCALA$$ \
     SCALA_HOME=/usr/share/scala \
-    SBT_VERSION=1.2.8
+    SBT_VERSION=$$SBT$$
 
 # NOTE:  install scala
 RUN apk add --no-cache --virtual=.build-dependencies wget ca-certificates && \
@@ -25,6 +25,5 @@ RUN mkdir -p "/usr/local/sbt" && \
 
 
 RUN ln -s /usr/local/sbt/bin/sbt /bin/sbt
-COPY . /sbt-regression-suite
-RUN mv /sbt-regression-suite/sampletest /sbt-regression-suite/src/test/scala/org/vaslabs/sampletest
-WORKDIR /sbt-regression-suite
+COPY . /$$PROJECTNAME$$
+WORKDIR /$$PROJECTNAME$$
