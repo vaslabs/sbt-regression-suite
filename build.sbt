@@ -2,7 +2,7 @@ import sbt.url
 
 name := "sbt-regression-suite"
 
-version := "0.6"
+version := "0.7"
 
 Global / scalaVersion := "2.12.9"
 
@@ -15,7 +15,7 @@ lazy val publishSettings = Seq(
       Some("releases" at nexus + "service/local/staging/deploy/maven2")
   },
   organization := "org.vaslabs.tests",
-  organizationName := "vaslabs",
+  organizationName := "Vasilis Nicolaou",
   scmInfo := Some(ScmInfo(
     url("https://github.com/vaslabs/sbt-regression-suite"),
     "scm:git@github.com:vaslabs/sbt-regression-suite.git")),
@@ -41,14 +41,38 @@ lazy val pluginSettings = Seq(
 
 
 lazy val `regression-suite` = (project in file("."))
-  .enablePlugins(SbtPlugin)
+  .enablePlugins(AutomateHeaderPlugin, SbtPlugin)
   .settings(pluginSettings)
   .settings(
     name := "sbt-regression-suite"
   ).settings(publishSettings)
+  .settings(releaseSettings)
 
 
 libraryDependencies ++= Seq(
   "com.spotify" % "docker-client" % "8.14.3",
   "org.scalatest" %% "scalatest" % "3.0.8" % Test
 )
+
+lazy val releaseSettings = {
+  import ReleaseTransformations._
+
+  Seq(
+    releaseCrossBuild := true,
+    releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+    releaseProcess := Seq[ReleaseStep](
+      checkSnapshotDependencies,
+      inquireVersions,
+      runClean,
+      releaseStepCommandAndRemaining("^ scripted"),
+      setReleaseVersion,
+      commitReleaseVersion,
+      tagRelease,
+      releaseStepCommandAndRemaining("^ publishSigned"),
+      setNextVersion,
+      commitNextVersion,
+      releaseStepCommand("sonatypeReleaseAll"),
+      pushChanges
+    )
+  )
+}

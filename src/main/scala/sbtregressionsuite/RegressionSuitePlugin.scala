@@ -19,36 +19,16 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.vaslabs.releases
+package sbtregressionsuite
 
-import com.spotify.docker.client.DockerClient
-import com.spotify.docker.client.messages.ContainerConfig
+import sbt._
 
-class DockerTestRunner(implicit docker: DockerClient) {
+object RegressionSuitePlugin extends AutoPlugin {
 
+  override def trigger = noTrigger
 
-  def runTest(
-              image: String,
-              command: Seq[String] = Seq("sbt", "test"),
-              network: Option[String]): Unit = {
-    val container = ContainerConfig.builder()
-      .image(image)
-      .cmd(command: _*)
-      .build()
-    val creation = docker.createContainer(container)
+  override def requires = sbt.plugins.JvmPlugin
 
-    val containerId = creation.id()
-    println(s"Container id to test is ${containerId}")
-    val info = docker.inspectContainer(containerId)
-    println(s"Container created ${info}")
-
-    network.foreach {
-      n => docker.connectToNetwork(containerId, n)
-    }
-
-    docker.startContainer(info.config().hostname())
-
-    if (docker.waitContainer(containerId).statusCode() != 0)
-      throw new AssertionError("Regression test failed")
-  }
+  override val projectSettings =
+      inConfig(RegressionSuiteKeys.regression)(RegressionSuiteKeys.baseRegressionSuiteSettings)
 }
