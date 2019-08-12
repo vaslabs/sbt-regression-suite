@@ -17,6 +17,14 @@ tests are testing your code in the repository this is not going to work for now 
 
 In other words, you need to be testing a service with state A with 2 different versions of your integration test.
 
+#### A working example
+- Spin the new version of your service, e.g. with docker compose
+- Run the regression test (as described below) that points to the services in docker compose
+- The regression test will first run the tests as the last time they were successful
+- Then it will create a new docker image and run the tests again
+
+#### Another example
+- Usage on a project can be found here https://github.com/vaslabs/flerken/blob/master/build.sbt#L24
 
 This plugin packs your code in a docker container and does some simple version control over it. For instance, the
 latest tag has your currently running production code.
