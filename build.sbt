@@ -2,7 +2,7 @@ import sbt.url
 
 name := "sbt-regression-suite"
 
-version := "0.7"
+version := "1.0"
 
 Global / scalaVersion := "2.12.9"
 
