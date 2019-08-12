@@ -29,7 +29,7 @@ lazy val publishSettings = Seq(
   ),
   publishMavenStyle := true,
   licenses := List("Apache-2.0" -> new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  homepage := Some(url("https://git.vaslabs.org/vaslabs/flerken")),
+  homepage := Some(url("https://git.vaslabs.org/vaslabs/sbt-regression-suite")),
   startYear := Some(2018)
 )
 
