@@ -60,10 +60,10 @@ dockerImage in regression := "The base name of your docker image without the tag
 
 newVersion in regression := version.value //This is going to be the tag of the new version
 
-testCommand in regression := Seq("sbt" ,"schedulerIntegrationTests/test")
+testCommand in regression := Seq("sbt" ,"moduleIntegrationTests/test")
 
 //This is useful if you spin the service with docker-compose (e.g. locally)
-dockerNetwork in regression := Some("sandbox_scheduler")
+dockerNetwork in regression := Some("sandbox_network")
 
 ```
 
