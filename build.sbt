@@ -36,7 +36,7 @@ lazy val publishSettings = Seq(
 
 lazy val pluginSettings = Seq(
   sbtPlugin := true,
-  crossSbtVersions := Seq("1.2.8", "0.13.19")
+  crossSbtVersions := Seq("1.2.8")
 )
 
 
