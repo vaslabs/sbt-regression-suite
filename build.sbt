@@ -7,13 +7,10 @@ version := "1.0"
 Global / scalaVersion := "2.12.9"
 
 lazy val publishSettings = Seq(
-  publishTo := {
-    val nexus = "https://oss.sonatype.org/"
-    if (version.value.trim.endsWith("SNAPSHOT"))
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
-  },
+  publishTo := Some(
+    if (isSnapshot.value) Opts.resolver.sonatypeSnapshots
+    else Opts.resolver.sonatypeStaging
+  ),
   organization := "org.vaslabs.tests",
   organizationName := "Vasilis Nicolaou",
   scmInfo := Some(ScmInfo(
