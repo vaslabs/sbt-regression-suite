@@ -1,4 +1,5 @@
 import sbt.url
+import xerial.sbt.Sonatype.GitHubHosting
 
 name := "sbt-regression-suite"
 
@@ -13,7 +14,9 @@ lazy val publishSettings = Seq(
   ),
   organization := "org.vaslabs.tests",
   organizationName := "Vasilis Nicolaou",
-  scmInfo := Some(ScmInfo(
+  sonatypeProfileName := "org.vaslabs",
+  sonatypeProjectHosting := Some(GitHubHosting("vaslabs", "sbt-regression-suite", "vaslabsco@gmail.com")),
+    scmInfo := Some(ScmInfo(
     url("https://github.com/vaslabs/sbt-regression-suite"),
     "scm:git@github.com:vaslabs/sbt-regression-suite.git")),
   developers := List(
